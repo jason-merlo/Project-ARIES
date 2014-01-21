@@ -1,0 +1,269 @@
+/* ---------- GLOBAL ---------- */
+
+body {
+    background: #343434;
+    margin: 0;
+    padding: 0;
+    font-family: 'CODE light', sans-serif;
+    text-decoration: none;
+
+    animation: fadein 2s;
+    -moz-animation: fadein 2s;
+    -webkit-animation: fadein 2s;
+    -o-animation: fadein 2s; 
+}
+   
+a {
+    text-decoration: none;
+    color: #eee;
+}
+
+a:hover {
+    color: #33B5E5;
+    text-shadow: 0px 0px 5px #000;
+}
+
+b, strong {
+    color: #4C4C4C ;
+    font-family: 'Roboto:700', sans-serif;
+}
+
+p {
+    font-family: 'Roboto', sans-serif;
+}
+
+blockquote {
+    color: #4C4C4C ;
+}
+
+::selection {
+    background-color: #2D9FC9 ;
+    color: #eee;
+    text-shadow: 0px 0px 10px #000;
+}
+
+
+/* ---------- HEADER ---------- */
+
+/* Title header bar */
+.titleHeader {
+    position:relative;
+    
+    padding-top: 75px;
+    padding-left: 100px;
+    padding-bottom: 20px;
+    text-transform: uppercase;
+    font-family: 'CODE light', sans-serif;
+    color: #eee ;
+    background: #111;
+}
+
+/*location bar */
+.accentBar {
+    font-family: 'CODE bold', sans-serif;
+    background: rgba(51, 181, 229, 0.54);
+    width: 100%;
+    height: 10px;
+    box-shadow: 0 0 10px #1f1f1f;
+}
+
+/* Name used in header */
+name, name b {
+    font-size: 75px;
+    color: #eee;
+}
+
+name b {
+    font-family: 'CODE bold', sans-serif;
+}
+
+/* Navigation links */
+li {
+    display: inline;
+    list-style-type: none;
+    margin-right: 60px;
+    font-size: 35px;
+}
+
+/*navigation list items */
+.navlist a{
+    transition: 0.2s ease-in;
+    transition: 0.2s ease-out;
+    -webkit-transition: 0.2s ease-in;
+    -webkit-transition: 0.2s ease-out;
+}
+
+.navlist a:hover {
+    color: #33B5E5;
+    text-shadow: 0px 0px 5px #000;
+}
+
+/* ---------- BODY ---------- */
+
+#projects {
+    display: table-cell;
+}
+
+/* box shape */
+.rectangle {
+    width: auto;
+    height: auto;
+    background: #4C4C4C;
+    padding-top: 30px;
+    padding-bottom: 20px;
+    padding-left: 50px;
+    padding-right: 50px;
+    color: #eee;
+    font-size: 50px;
+    box-shadow: inset 0px 0px 10px #000;
+    margin: 0px;
+}
+.rectangle b {
+    color: #eee;
+    text-shadow: 0 0 10px #343434;
+    font-family: 'CODE bold', sans-serif;
+}
+
+
+.projBox .rectangle {
+    transition: 0.3s ease-in;
+    transition: 0.3s ease-out;
+    -webkit-transition: 0.3s ease-in;
+    -webkit-transition: 0.3s ease-out;
+}
+
+
+
+/* expandable image boxes */
+.expandImageBox {
+    margin-top: 5%;
+    
+    -moz-box-shadow: inset 0px 0px 10px #000;
+    -webkit-box-shadow: inset 0px 0px 10px #000;
+    box-shadow: inset 0px 0px 10px #000;
+    
+    z-index: 1;
+    
+    overflow: hidden;
+}
+
+.expandImageBox img {
+    width: 100%;
+    margin-top: -20%;
+    margin-bottom: -20%;
+    position: relative;
+    z-index: -1;
+    
+    transition: 0.2s ease-in;
+    transition: 0.2s ease-out;
+    -webkit-transition: 0.2s ease-in;
+    -webkit-transition: 0.2s ease-out;
+}
+
+.expandImageBox:hover img{
+    margin-top: -19.5%;
+    margin-bottom: -19.5%;
+}
+
+/* Project boxes */
+.projBox {
+    
+    z-index: 0;
+    position: relative;
+    margin: 50px;
+    padding: 50px;
+    
+    color: #fff;
+    font-size: 20px;
+    font-family: 'CODE light', sans-serif;
+    
+    background: #eee;
+    
+    transition: 0.3s ease-in;
+    transition: 0.3s ease-out;
+    -webkit-transition: 0.3s ease-in;
+    -webkit-transition: 0.3s ease-out;
+}
+
+.projBox:hover {
+    box-shadow: 0px 0px 25px #000;
+}
+
+.projBox p {
+    padding: 40px;
+    padding-bottom: 0;
+    color: #808080;
+}
+
+
+
+/* ---------- SIDE BAR ---------- */
+/* Information Side-bar */
+.sideBar {
+    display: table-cell;
+    padding: 50px;
+    padding-left: 0;
+    width: 250px;
+}
+
+.sideBar img { 
+    margin: 30px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    height: 112px;
+}
+
+.sideBar p {
+    color: #eee;
+    font-size: 18px;
+    padding: 30px;
+    background: #1f1f1f;
+    box-shadow: inset 0 0 10px #000;
+}
+
+.sideBar b {
+    color: #fff;
+    transition: 0.2s ease-in;
+    transition: 0.2s ease-out;
+    -webkit-transition: 0.2s ease-in;
+    -webkit-transition: 0.2s ease-out;
+}
+
+.sideBar b:hover {
+    color: #33B5E5;
+    text-shadow: 0px 0px 5px #000;   
+}
+
+/* webpage fadin */
+@keyframes fadein {
+    from {
+        opacity:0;
+    }
+    to {
+        opacity:1;
+    }
+}
+@-moz-keyframes fadein {
+    from {
+        opacity:0;
+    }
+    to {
+        opacity:1;
+    }
+}
+@-webkit-keyframes fadein {
+    from {
+        opacity:0;
+    }
+    to {
+        opacity:1;
+    }
+}
+@-o-keyframes fadein {
+    from {
+        opacity:0;
+    }
+    to {
+        opacity: 1;
+    }
+}

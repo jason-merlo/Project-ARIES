@@ -1,0 +1,8 @@
+@font-face {
+    font-family: "CODE bold";
+    src: local("/fonts/CODE bold.otf") format("opentype");
+}
+@font-face {
+    font-family: "CODE light";
+    src: local("/fonts/CODE light.otf") format("opentype");
+}
