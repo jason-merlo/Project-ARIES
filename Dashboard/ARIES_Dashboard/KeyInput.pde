@@ -59,19 +59,19 @@ void keyReleased() {
 void updateKeys() {
   // Drive
   if (keyUp == true) {
-    speed = 20;
+    speed = 0;
   } else if (keyDown == true) {
-    speed = -20;
+    speed = 0;
   } if (keyDown == false && keyUp == false) {
     speed = 0;
   }
   
   // Turn
   if (keyLeft == true) {
-    turn = 100;
+    turn = 400;
   } else if (keyRight == true) {
-    turn = -100;
+    turn = 600;
   } else {
-    turn = 0;
+    turn = 500;
   }
 }

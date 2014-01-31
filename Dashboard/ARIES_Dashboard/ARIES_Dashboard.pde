@@ -17,8 +17,8 @@ IPCapture camB;
 ////////////////////
 // PORT CONSTANTS //
 ////////////////////
-//final String ip = "192.168.1.131";
-final String ip = "10.2.45.3";
+final String ip = "192.168.1.131";
+//final String ip = "10.2.45.3";
 final int comPort = 8990;
 final int camPortA = 8090;
 final int camPortB = 8091;
@@ -52,8 +52,7 @@ void setup()
   // Connect to com port
   c = new Client(this, ip, comPort);
   // Connect to cameras
-  camA = new IPCapture(this, "http://" + "10.2.45.10" + camUrl, "", "");
-  //camA = new IPCapture(this, "http://" + ip + ":" + camPortA + camUrl, "", "");
+  camA = new IPCapture(this, "http://" + ip + ":" + camPortA + camUrl, "", "");
   camB = new IPCapture(this, "http://" + ip + ":" + camPortB + camUrl, "", "");
   // Start camera streams
   camA.start();
@@ -114,8 +113,8 @@ void rebindSocket() {
 }
 
 void sendData() {
-  c.write(nf(speed, 3) + "," + nf(turn, 3) + ",100:");
-  println(nf(speed, 3) + "," + nf(turn, 3) + ",100:");
+  c.write(nf(turn, 3) + "," + nf(speed, 3) + ",\n");
+  println(nf(turn, 3) + "," + nf(speed, 3));
 }
 
 void getData() {
