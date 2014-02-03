@@ -52,15 +52,9 @@ void loop()
     analogWrite(turnRightPin, -turnOutput);
   }
   
-  Serial.print(turnInput);
-  Serial.print(",\t");
-  Serial.println(turnOutput);
-}
-
-void readSerial() {
-  if (Serial.available()) {
-    
-  }
+  //Serial.print(turnInput);
+  //Serial.print(",\t");
+  //Serial.println(turnOutput);
 }
 
 

@@ -1,6 +1,10 @@
+// TODO: convert strings to numerical values
+
 //////////////////////////
 //// Parse User Input ////
 //////////////////////////
+// example data:
+// [valueID],[value];...[valueID],[value];\n
 
 // valueId tags each transmitted parameter with an id so not all params have to sent each loop
 
@@ -10,49 +14,37 @@ byte readUsrByte;
 int readUsrInt;
 float readUsrFloat;
 double readUsrDouble;
-String readUsrChar;
+char readUsrChar;
 byte valueId = -1;
+
+// Buffer string
+String dataBuffer;
 // each location represents an id and datatype associated //
-byte dataType [] = {0,4,4,4,4,4};
+byte dataType [] = {
+  0,4,4,4,4,4};
 // 0  enable/disable
 // 1  kP
 // 2  kI
 // 3  kD
 // 4  turn set point
 // 5  speed
-void SearialEvent() {
-  
-  Serial.println("RECIEVED:");
-  if(Serial.available()) {
-    
+void serialEvent() {
+  while(Serial.available()) {
     // get new input
-    readUsrByte = byte(Serial.read());
+    readUsrChar = char(Serial.read());
 
-    
-    if (valueId == -1) {
-
-      // Take state of car //
-      if (dataIndex = 0) {
-        state = readUsrByte;
-        dataIndex++;
-        Serial.println("RECIEVED:");
-        Serial.println(readUsrByte);
-      }
-
+    // Unknown state of information
+    if (valueId == -1 && dataBuffer == "") {      
       // EOL signified by newline //
-      if ( char(readUsrByte) == '\n' ) {
+      if ( readUsrChar == '\n' ) {
         dataIndex = 0;
-      } 
-
-      if (dataIndex > 0) {
-        valueId = readUsrByte;
+      } else {
+        valueId = int(readUsrChar);
       }
-
     } else {
       parseVals();
       storeVals();
       // Set valueId back to unknown state
-      valueId = -1;
       dataIndex++;
     }
   }
@@ -60,31 +52,40 @@ void SearialEvent() {
 
 // Parses data for value type
 void parseVals() {
-  switch(dataType[valueId]) {
-      case 0:
-        readUsrBool = boolean(Serial.read());
-        break;
+  Serial.print(readUsrChar);
+  // Split values with commas
+  if ( readUsrChar == ',') {
+    switch(dataType[valueId]) {
+    case 0:
+      readUsrBool = atoi(dataBuffer) > 1 ? true: false;
+      break;
 
-      case 1:
-        readUsrByte = byte(Serial.read());
-        break;
+    case 1:
+      readUsrByte = byte(dataBuffer);
+      break;
 
-      case 2:
-        readUsrInt = int(Serial.read());
-        break;
+    case 2:
+      readUsrInt = int(dataBuffer);
+      break;
 
-      case 3:
-        readUsrFloat = float(Serial.read());
-        break;
+    case 3:
+      readUsrFloat = float(dataBuffer);
+      break;
 
-      case 4:
-        readUsrDouble = double(Serial.read());
-        break;
+    case 4:
+      readUsrDouble = double(dataBuffer);
+      break;
 
-      case 5:
-        readUsrChar = String(char(Serial.read())); 
-        break;
-      }
+    case 5:
+      readUsrChar = String(char(dataBuffer)); 
+      break;
+    }
+    // reset valueID and buffer
+    dataBuffer = "";
+    valueId = -1;
+  } else {
+    dataBuffer += readUsrChar;
+  }
 }
 
 // Store parsed values
@@ -94,14 +95,16 @@ void storeVals() {
   case 0:
     if (readUsrBool) {
       state = true;
-    } 
-    else {
+    } else {
       state = false;
     }
     break;
 
   case 1:
     turnSetPoint = readUsrDouble;
+    Serial.println("case1 triggered");
+    Serial.println(readUsrDouble);
+    Serial.println(turnSetPoint);
     break;
 
   case 2:
@@ -125,3 +128,4 @@ void storeVals() {
     turnPID.SetTunings(kP,kI,kD);
   }
 }
+
