@@ -43,18 +43,17 @@ void loop()
   turnInput = analogRead(turnPotPin);
   turnPID.Compute();
   
-  // Contro H-bridge to turn steering
-  if (turnOutput >= 0) {
-    analogWrite(turnRightPin, 0);
-    analogWrite(turnLeftPin, turnOutput); 
-  } else {
-    analogWrite(turnLeftPin, 0);
-    analogWrite(turnRightPin, -turnOutput);
-  }
-  
-  //Serial.print(turnInput);
-  //Serial.print(",\t");
-  //Serial.println(turnOutput);
+  setTurnOutput(turnOutput);
 }
 
+void setTurnOutput(double output) {
+  // Contro H-bridge to turn steering
+  if (output >= 0) {
+    analogWrite(turnRightPin, 0);
+    analogWrite(turnLeftPin, output); 
+  } else {
+    analogWrite(turnLeftPin, 0);
+    analogWrite(turnRightPin, -output);
+  }
+}
 
