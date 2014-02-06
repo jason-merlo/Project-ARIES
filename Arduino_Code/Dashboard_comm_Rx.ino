@@ -32,6 +32,9 @@ byte dataType [] = {
 // 4  turn set point
 // 5  speed
 void serialEvent() {
+  responseTime = 0;
+  lastResponseTime = millis();
+  
   while(Serial.available()) {
     // get new input
     readUsrChar = char(Serial.read());
