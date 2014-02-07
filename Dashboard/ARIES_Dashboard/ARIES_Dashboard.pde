@@ -12,7 +12,7 @@ IPCapture camA;
 IPCapture camB;
 
 // GUI ELEMENTS
-
+Button stateToggle;
 
 ////////////////////
 // PORT CONSTANTS //
@@ -60,12 +60,13 @@ void setup()
 
   ////////////////////////////////////
   // GUI elements
+  stateToggle = new Button(100, 400, 200, 50, "Disabled", "Enabled", true);
 }
 
 void draw() 
 {
   updateKeys();
-  
+  updateGui();
   drawCameras();
   
   int time = millis() - connectTime;
@@ -113,15 +114,19 @@ void rebindSocket() {
 }
 
 void sendData() {
-  c.write(nf(turn, 3) + "," + nf(speed, 3) + ",\n");
-  println(nf(turn, 3) + "," + nf(speed, 3));
+  /*if (stateToggle.getState())
+    c.write("0,1:");
+  else
+    c.write("0,0:"); 
+  */
+  c.write("0,0:" + "1," + nf(turn, 3) + ":" + "2," + nf(speed, 3) + ":");
 }
 
 void getData() {
   if (c.available() > 0) {
     fill(50);
     noStroke();
-    rect(100, 550, 200, -100);
+    rect(100, 500, 200, -20);
     fill(255);
     text(c.readString(), 100, 500);
     rebindSocket();
@@ -129,3 +134,9 @@ void getData() {
   }
 }
 
+////////////////////////
+// GUI Operations
+void updateGui() {
+  stateToggle.update();
+  if (stateToggle.buttonPressed()) stateToggle.toggle();
+}

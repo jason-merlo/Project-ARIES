@@ -178,5 +178,9 @@ class Button {
       enabled = true;
     }
   }
+  
+  boolean getState() {
+    return enabled;
+  }
 }
 
