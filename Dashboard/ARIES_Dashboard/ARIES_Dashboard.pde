@@ -18,7 +18,6 @@ Button stateToggle;
 // PORT CONSTANTS //
 ////////////////////
 final String ip = "192.168.1.131";
-//final String ip = "10.2.45.3";
 final int comPort = 8990;
 final int camPortA = 8090;
 final int camPortB = 8091;
@@ -76,7 +75,6 @@ void draw()
     getData();
   }
   if (time > 1000) {
-    delay(1000);
     rebindSocket();
   }
 }
@@ -109,8 +107,9 @@ void drawCameras() {
 ////////////////////////
 // Network Operations
 void rebindSocket() {
-  c.stop();
-  c = new Client(this, ip, comPort);
+  //delay(100);
+  //c.stop();
+  //c = new Client(this, ip, comPort);
 }
 
 void sendData() {
