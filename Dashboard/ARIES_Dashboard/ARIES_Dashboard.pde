@@ -38,8 +38,8 @@ final byte imgBorder = 10; // 10 pixels
 ///////////////////////
 // CONTROL VARIABLES //
 ///////////////////////
-int speed;  // (-100, 100)
-int turn;   // (-100, 100)
+float speed;  // (-100, 100)
+float turn;   // (-100, 100)
 
 void setup() 
 {
@@ -107,27 +107,29 @@ void drawCameras() {
 ////////////////////////
 // Network Operations
 void rebindSocket() {
-  //delay(100);
-  //c.stop();
-  //c = new Client(this, ip, comPort);
+  
 }
 
 void sendData() {
-  /*if (stateToggle.getState())
-    c.write("0,1:");
+  if (stateToggle.getState())
+    c.write("00,000001\n");
   else
-    c.write("0,0:"); 
-  */
-  c.write("0,0:" + "1," + nf(turn, 3) + ":" + "2," + nf(speed, 3) + ":");
+    c.write("00,000000\n"); 
+    
+  c.write("01," + nf(turn, 3, 2) + "\n");
+  c.write("02," + nf(speed, 3, 2) + "\n");
 }
 
 void getData() {
   if (c.available() > 0) {
+    String input = c.readString();
+    
     fill(50);
     noStroke();
     rect(100, 500, 200, -20);
     fill(255);
-    text(c.readString(), 100, 500);
+    text(input, 100, 500);
+    println(input);
     rebindSocket();
     connectTime = millis();
   }

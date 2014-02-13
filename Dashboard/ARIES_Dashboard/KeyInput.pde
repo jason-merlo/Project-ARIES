@@ -61,9 +61,9 @@ void updateKeys() {
   if (keyUp == true) {
     speed = 0;
   } else if (keyDown == true) {
-    speed = 0;
+    speed = -50.1111;
   } if (keyDown == false && keyUp == false) {
-    speed = 0;
+    speed = 50.1;
   }
   
   // Turn
