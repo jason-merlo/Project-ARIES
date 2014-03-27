@@ -71,11 +71,7 @@ void draw()
   int time = millis() - connectTime;
   if (time > 100) {
     println(time);
-    sendData();
     getData();
-  }
-  if (time > 1000) {
-    rebindSocket();
   }
 }
 
@@ -106,31 +102,27 @@ void drawCameras() {
 
 ////////////////////////
 // Network Operations
-void rebindSocket() {
-  
-}
 
 void sendData() {
+  // 0  enable/disable
+  // 1  kP
+  // 2  kI
+  // 3  kD
+  // 4  turn set point
+  // 5  speed
+  
   if (stateToggle.getState())
-    c.write("00,000001\n");
+    c.write("00,000001:");
   else
-    c.write("00,000000\n"); 
+    c.write("00,000000:"); 
     
-  c.write("01," + nf(turn, 3, 2) + "\n");
-  c.write("02," + nf(speed, 3, 2) + "\n");
+  c.write("04," + nf(turn, 3, 2) + ":");
+  c.write("05," + nf(speed, 3, 2) + ":");
 }
 
 void getData() {
   if (c.available() > 0) {
-    String input = c.readString();
-    
-    fill(50);
-    noStroke();
-    rect(100, 500, 200, -20);
-    fill(255);
-    text(input, 100, 500);
-    println(input);
-    rebindSocket();
+    sendData();
     connectTime = millis();
   }
 }

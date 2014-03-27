@@ -26,11 +26,11 @@ String dataBuffer = "";
 byte dataType [] = {
   0,4,4,4,4,4};
 // 0  enable/disable
-// 1  kP
-// 2  kI
-// 3  kD
-// 4  turn set point
-// 5  speed
+// 1  turn set point
+// 2  drive speed
+// 3  kP
+// 4  kI
+// 5  kD
 void serialEvent() {
   responseTime = 0;
   lastResponseTime = millis();
@@ -40,7 +40,9 @@ void serialEvent() {
     readUsrChar = char(Serial.read());
 
     parseVals();
+    delay(1);
   }
+  Serial.println("*");
 }
 
 // Parses data for value type

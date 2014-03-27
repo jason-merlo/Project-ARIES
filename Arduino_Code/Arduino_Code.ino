@@ -29,8 +29,8 @@ int responseTime;
 
 void setup()
 {
-  // Open serial line @9600 baud
-  Serial.begin(9600);
+  // Open serial line @57600 baud
+  Serial.begin(57600);
   
   // Set output limits
   turnPID.SetOutputLimits(-255,255);
@@ -99,6 +99,8 @@ void initDriveMotor() {
   delay(1000);
   driveMotor.writeMicroseconds(1500);
   delay(1000);
+  // Send signal to start sending data
+  Serial.println("*");
 }
 
 // take in number between -500 and 500
