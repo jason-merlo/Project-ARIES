@@ -195,6 +195,7 @@ void writeKd (double Kd) {
 // Serial Reads
 
 char[] readSerial () {
+    int responseLen;
     char buf [1024];
     bzero(buf, 1024);
     responseLen = read (fd, buf, sizeof(buf));	// read up to 1024 characters if ready to read
@@ -209,6 +210,7 @@ char[] readSerial () {
 }
 
 char[] readSerial (int len) {
+    int responseLen;
     char buf [len];
     bzero(buf, sizeof(buf));
     responseLen = read (fd, buf, sizeof(buf));
@@ -233,13 +235,16 @@ bool serialReady () {
 int main(int argc, const char* argv[]) {
 	
 	int ang = 400;
-	char angBuff[10];
-	char responseLen = -1;
-
+    
 	while (1) {
         if (serialReady()) {
             enablePing();
-            writeAngle();
+            writeAngle(ang);
+            if (ang > 600) {
+                ang = 400;
+            } else  {
+                ang++;
+            }
         }
         
 		delay(100);
