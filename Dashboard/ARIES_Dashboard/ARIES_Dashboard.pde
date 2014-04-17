@@ -28,6 +28,7 @@ final String camUrl = "/?action=stream.mjpg";
 Client c;
 int data[];
 int connectTime = 0;
+int messageQue = 2;
 
 ///////////////////
 // GUI VARIABLES //
@@ -40,6 +41,7 @@ final byte imgBorder = 10; // 10 pixels
 ///////////////////////
 float speed;  // (-100, 100)
 float turn;   // (-100, 100)
+
 
 void setup() 
 {
@@ -69,7 +71,7 @@ void draw()
   drawCameras();
   
   int time = millis() - connectTime;
-  if (time > 100) {
+  if (time > 50) {
     println(time);
     getData();
   }
@@ -102,29 +104,54 @@ void drawCameras() {
 
 ////////////////////////
 // Network Operations
-
+int loops = 0;
 void sendData() {
   // 0  enable/disable
-  // 1  kP
-  // 2  kI
-  // 3  kD
-  // 4  turn set point
-  // 5  speed
-  
-  if (stateToggle.getState())
-    c.write("00,000001:");
-  else
-    c.write("00,000000:"); 
-    
-  c.write("04," + nf(turn, 3, 2) + ":");
-  c.write("05," + nf(speed, 3, 2) + ":");
+  // 1  turn set point
+  // 2  drive speed
+  // 3  kP
+  // 4  kI
+  // 5  kD
+
+  if (stateToggle.getState()) {
+    writeEnabled(true);
+    writeTurn(turn);
+    writeSpeed(speed);
+  } else {
+    writeEnabled(false);
+  }
 }
 
 void getData() {
   if (c.available() > 0) {
-    sendData();
+    messageQue--;
+    if (messageQue == 0)
+      sendData();
     connectTime = millis();
   }
+  //delay(500);
+}
+
+/////////////////////////
+// Writing Operations
+void writeEnabled (boolean isEnabled) {
+  if (isEnabled)
+    c.write("00,000001:");
+  else
+    c.write("00,000000:");
+  messageQue++;
+}
+void writeTurn (float turnAng) {
+  c.write("01," + nf(turnAng, 3, 2) + ":");
+  messageQue++;
+}
+void writeSpeed (float driveSpeed) {
+  if (driveSpeed < 0) {
+    c.write("02," + nf(driveSpeed, 3, 1) + ":");
+  } else {
+    c.write("02," + nf(driveSpeed, 3, 2) + ":");
+  }
+  messageQue++;
 }
 
 ////////////////////////

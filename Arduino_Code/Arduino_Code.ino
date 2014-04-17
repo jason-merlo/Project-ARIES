@@ -111,7 +111,7 @@ void driveMotorSpeed(double output, boolean enabled) {
     output = -driveLimit;
     
   if (enabled) 
-    driveMotor.writeMicroseconds(1500 + output);
+    driveMotor.writeMicroseconds(1500 - output);
   else
     driveMotor.writeMicroseconds(1500);
 } 

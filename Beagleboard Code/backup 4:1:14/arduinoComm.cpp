@@ -8,6 +8,7 @@
 #include <fcntl.h>      // For O_RDWR
 #include <unistd.h>     // For open(), creat()
 #include <time.h>       // For delay
+#include <ctime>
 #include <signal.h>     // For system signals
 #include <sys/socket.h> // Needed for the socket functions
 #include <netdb.h>      // Needed for the socket functions
@@ -19,17 +20,17 @@ void error_message (char[], int);
 void error_message (char[], int, char[], char[]);
 void delay (unsigned int);
 void handler (int);
+void initSerial();
 void enablePing ();
 void writeAngle (int);
 void writeSpeed (double);
 void writekp (double);
 void writeki (double);
 void writekd (double);
-void readSerial ();
-void readSerial (int);
+int readSerial ();
+int readSerial (int);
 
 using namespace std;
-
 
 /************************
  *** GLOBAL VARIABLES ***
@@ -39,9 +40,11 @@ int fd;
 bool txReady;
 
 // Loop timer
-time_t timer;
-double seconds;
+t_time time_begin, time_end;
 
+// Input
+int bufferLen;
+char buffer[1024];
 
 int set_interface_attribs (int fd, int speed, int parity) {
 	struct termios tty;
@@ -124,7 +127,7 @@ void handler (int s){
  ** Serial Communications
  **************************/
 
-void beginSerial() {
+void initSerial() {
     /* Handle Signals */
 	struct sigaction sigIntHandler;
     
@@ -136,11 +139,12 @@ void beginSerial() {
     
 	/* Open Serial Port */
 	char *portname = "/dev/ttyACM0";
-    
+        
+        printf("Opening %s\n", portname);
+
 	fd = open (portname, O_RDWR | O_NOCTTY | O_SYNC);
 	if (fd < 0) {
 		error_message ("error %d opening %s: %s", errno, portname, strerror (errno));
-		return -1;
 	}
     
 	set_interface_attribs (fd, B57600, 0);	// set speed to 57,600 bps, 8n1 (no parity)
@@ -150,78 +154,90 @@ void beginSerial() {
 // Serial Writes
 
 void enablePing() {
-    time(&timer);
-    
-    seconds = difftime(timer,time());
-    write (fd, "00,000001", 10);
-    printf("Loop time: %d", seconds);
+    write (fd, "00,000001:", 10);
     txReady = false;
 }
 
 void writeAngle (int ang) {
     char output[10];
-    sprintf(output, "01,%6i", ang);
+    sprintf(output, "01,%6i:", ang);
     write (fd, output, 10);
     txReady = false;
 }
 
 void writeSpeed (double speed) {
     char output[10];
-    sprintf(output, "02,%6d", speed);
+    sprintf(output, "02,%6d:", speed);
     write (fd, output, 10);
     txReady = false;
 }
 
 void writeKp (double Kp) {
-    char output[10]
-    sprintf(output, "01,%6%d", Kp);
+    char output[10];
+    sprintf(output, "01,%6%d:", Kp);
     write (fd, output, 10);
     txReady = false;
 }
 
 void writeKi (double Ki) {
-    char output[10]
-    sprintf(output, "01,%6%d", Ki);
+    char output[10];
+    sprintf(output, "01,%6%d:", Ki);
     write (fd, output, 10);
     txReady = false;
 }
 void writeKd (double Kd) {
-    char output[10]
-    sprintf(output, "01,%6%d", Kd);
+    char output[10];
+    sprintf(output, "01,%6%d:", Kd);
     write (fd, output, 10);
     txReady = false;
 }
 
 // Serial Reads
 
-char[] readSerial () {
+int readSerial () {
     int responseLen;
-    char buf [1024];
+    char buf[1024];
     bzero(buf, 1024);
     responseLen = read (fd, buf, sizeof(buf));	// read up to 1024 characters if ready to read
     
-    if (!txREady) {
+    if (!txReady) {
         for (int i = 0; i < responseLen; i++) {
             if (buf[i] == '*') {
                 txReady = true;
             }
         }
     }
+
+    bzero(buffer, responseLen);
+    
+    for(int i = 0; i < responseLen; i++) {
+        buffer[i] = buf[i];
+    }
+
+    return responseLen;
 }
 
-char[] readSerial (int len) {
+int readSerial (int len) {
     int responseLen;
-    char buf [len];
+    char buf[len];
     bzero(buf, sizeof(buf));
     responseLen = read (fd, buf, sizeof(buf));
-    
-    if (!txREady) {
+
+    if (!txReady) {
         for (int i = 0; i < responseLen; i++) {
             if (buf[i] == '*') {
                 txReady = true;
             }
         }
     }
+
+    bzero(buffer, responseLen);
+
+    for(int i = 0; i < responseLen; i++) {
+        buffer[i] = buf[i];
+    }
+
+    return responseLen;
 }
 
 bool serialReady () {
@@ -235,8 +251,16 @@ bool serialReady () {
 int main(int argc, const char* argv[]) {
 	
 	int ang = 400;
-    
+
+	initSerial();
+        printf("Finished initialization\n");
+	delay(100);
 	while (1) {
+	
+	readSerial();
+	printf("----------------------------------------\n");
+	printf("%s\n", buffer);
+
         if (serialReady()) {
             enablePing();
             writeAngle(ang);
@@ -247,7 +271,7 @@ int main(int argc, const char* argv[]) {
             }
         }
         
-		delay(100);
+	delay(100);
 	}
 	return 0;
 }

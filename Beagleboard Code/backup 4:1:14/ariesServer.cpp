@@ -2,7 +2,7 @@
 // ariesServer.cpp
 // ARIES_server
 //
-// Ported from AdamBots 2014 BeagleBone code by Jason Merlo on 2/25/14.
+// Adapted from AdamBots 2014 BeagleBone code by Jason Merlo on 2/25/14.
 //
 // Description: Simple program to listen on port for commands and control Arduino
 // To compile: g++ -o ARIES_Server  ariesServer.cpp -L /usr/lib/libpthread*.so
@@ -16,7 +16,7 @@
 #include <netinet/in.h> // For TCP
 #include <pthread.h>    // For Posix threads
 #include <fcntl.h>      // For O_RDWR
-#include <unistd.h>     // For open(), creat()
+#include <unistd.h>     // For open(), create()
 #include <time.h>       // For delay
 #include <signal.h>     // For system signals
 #include <sys/socket.h> // Needed for the socket functions
@@ -27,7 +27,6 @@
 using namespace std;
 
 /* Prototypes */
-/*
  void error_message (char[]);
  void error_message (char[], int);
  void error_message (char[], int, char[], char[]);
@@ -35,8 +34,9 @@ using namespace std;
  void set_blocking (int, int);
  void delay (unsigned int);
  void handler (int);
+ void serialComm(void);
  void tcpServer(void);
- */
+ 
 void error_message(const char *msg)
 {
 	perror(msg);
@@ -55,9 +55,10 @@ int portno;
 
 int fd, sockfd, newsockfd; // Ports: fd = serial, sockfd = network, newsockfd = network
 
-const char responseLen = 32;
-char *buffer[responseLen];
-int dataReady = 0;
+char responseLen;
+string buffer;
+string lastIndex = "-1";
+volatile char dataReady = 0;
 
 int set_interface_attribs (int fd, int speed, int parity) {
     struct termios tty;
@@ -117,7 +118,7 @@ void delay (unsigned int ms) {
     const clock_t start = clock();
     
     clock_t current;
-    while ((double)(current-start)/CLOCKS_PER_SEC < ms / 1000) {
+    while ((double)(current-start)/CLOCKS_PER_SEC < ms / 1000.0f) {
         current = clock();
     }
 }
@@ -128,6 +129,7 @@ void handler(int s){
         close(fd);
         close(sockfd);
         close(newsockfd);
+	printf("All Sockets Closed");
     } else {
         printf("\nCaught signal %d\n",s);
     }
@@ -150,20 +152,28 @@ void* serialComm(void*) {
     fd = open (portname, O_RDWR | O_NOCTTY | O_SYNC);
     if (fd < 0) {
         error_message ("error %d opening %s: %s", errno, portname, strerror (errno));
-        return -1;
+        exit(-1);
     }
     
     set_interface_attribs (fd, B9600, 0);   // set speed to 9,600 bps, 8n1 (no parity)
     set_blocking (fd, 0);                   // set no blocking
-    
+
+    printf("Serial Socket Opened\n");    
+
+    int loopcount = 0;
+
     while ( true ) {
+		printf("SERIAL LOOP\n");
 		if (dataReady == 1) {
-			write (fd, &buffer, responseLen);
+			loopcount++;
+			printf("loop#: %i\n", loopcount);
+			printf("buffer= %s\n", buffer.c_str());
+			write (fd, buffer.c_str(), buffer.length());
+			printf("Serial written\n");
+			buffer.erase();
 			dataReady = 0;
-			printf("buffer= %s", buffer);
 		}
-		printf("dataReady: %i\n", dataReady);
-		delay(100);
+                delay(1000);
 	}
 }
 
@@ -199,34 +209,36 @@ void* tcpServer(void*) {
 	listen(sockfd,5);
 	clilen = sizeof(cli_addr);
     
-	///////////////////////
-	// Main program loop //
 	printf("Waiting for request...\n");
 	/* Wait for new socket connection */
 	newsockfd = accept(sockfd, (struct sockaddr *) &cli_addr, &clilen);
 	if (newsockfd < 0)
 		error_message("ERROR on accept");
     
-	printf("Accepted\n");
+	printf("Network Socket Accepted\n");
     
     
 	while ( true ) {
+		printf("TCP LOOP\n");
 		if (dataReady == 0) {
-			bzero(&buffer, responseLen);
-            
-			if (read(newsockfd, &buffer,responseLen) < 0)
-				error_message("ERROR reading from socket");
+			/* Ping client for new data */
+                        if (send(newsockfd,lastIndex,2,0) == -1)
+                                error_message("ERROR on sending");
 
-			/* Send success message varification back go client */
-			if (send(newsockfd,buffer,responseLen,0) == -1)
-				error_message("ERROR on sending");
+			if(responseLen = read(newsockfd, buffer.c_str(), buffer.length()) < 0)
+				error_message("ERROR reading from socket");
 			
-			delay(10);
+			//printf("tcpBuf= %s\n", buffer.c_str());
+			
+			lastIndex = buffer.substr(0,2);
 			dataReady = 1;
+			delay(100);
 		}
+		delay(1000);
 	}
 	close(newsockfd);
 	close(sockfd);
+	printf("Network Socket Closed");
 	return 0;
 }
 
@@ -234,20 +246,18 @@ int main(int argc,char *argv[]) {
     
     
 	pthread_t tcpThread;
-    pthread_t serialThread;
-    
+	pthread_t serialThread;
+
 	if (argc >= 2)
 		portno = atoi(argv[1]);
 	else
 		error_message("No port specified");
-    
-	pthread_create(&tcpThread,NULL,tcpServer,NULL);
-    pthread_create(&serialThread,NULL,serialComm,NULL);
-    
-    while (1) {
-        delay(100);
-    }
-    
-	return 0;
-}
 
+	pthread_create(&tcpThread,NULL,tcpServer,NULL);
+	pthread_create(&serialThread,NULL,serialComm,NULL);
+
+	while( true ) {
+		printf("MAIN LOOP\n");
+		delay(1000);
+	}
+}
