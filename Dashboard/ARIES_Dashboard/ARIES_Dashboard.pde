@@ -1,12 +1,15 @@
-/////////////////////
-// LIBRARY IMPORTS //
-/////////////////////
-import processing.net.*;  // Network lib
+/////////////
+// IMPORTS //
+/////////////
 import ipcapture.*;       // MJPEG lib
+import processing.serial.*;  // Serial lib
 
-///////////////////////////
-// OBJECT INSTANTIATIONS //
-///////////////////////////
+/////////////
+// OBJECTS //
+/////////////
+// SERIAL DEVICES
+Serial arduino;
+
 // CAMERAS
 IPCapture camA;
 IPCapture camB;
@@ -14,44 +17,50 @@ IPCapture camB;
 // GUI ELEMENTS
 Button stateToggle;
 
-////////////////////
-// PORT CONSTANTS //
-////////////////////
+///////////////
+// CONSTANTS //
+///////////////
+// Ports
 final String ip = "192.168.1.131";
-final int comPort = 8990;
 final int camPortA = 8090;
 final int camPortB = 8091;
 final String camUrl = "/?action=stream.mjpg";
-//////////////////////////
-// CONNECTION VARIABLES //
-//////////////////////////
-Client c;
-int data[];
-int connectTime = 0;
-int messageQue = 2;
+final String serialPort = "/dev/cu.usbserial";  // All or part of the serial port name
 
-///////////////////
-// GUI VARIABLES //
-///////////////////
+// GUI
 final byte imageScale = 1;
 final byte imgBorder = 10; // 10 pixels
 
-///////////////////////
-// CONTROL VARIABLES //
-///////////////////////
+// Connection
+final int sendTimeout = 200; // milliseconds
+
+///////////////
+// VARIABLES //
+///////////////
+// Control
 float speed;  // (-100, 100)
 float turn;   // (-100, 100)
 
+// PID
+float kP = 5;
+float kI = 3;
+float kD = .1;
 
+// Serial
+boolean readyToSend;
+int connectTime;
+int lastSendTime = -1;
+
+
+/* INITIALIZATION FUNCTION */
 void setup() 
 {
-  // Setup window
+  /* WINDOW SETUP */
   size(1000, 650);
   background(49);
-  frameRate(20);
+  frameRate(30);
 
-  // Connect to com port
-  c = new Client(this, ip, comPort);
+  /* CAMERA COMMUNICATION */
   // Connect to cameras
   camA = new IPCapture(this, "http://" + ip + ":" + camPortA + camUrl, "", "");
   camB = new IPCapture(this, "http://" + ip + ":" + camPortB + camUrl, "", "");
@@ -59,104 +68,35 @@ void setup()
   camA.start();
   camB.start();
 
-  ////////////////////////////////////
-  // GUI elements
+  /* GUI ELEMENTS */
   stateToggle = new Button(100, 400, 200, 50, "Disabled", "Enabled", true);
+  
+  /* ARDUINO SERIAL COMMUNICATION */
+  for (int i = 0; i < Serial.list().length; i++) {
+    if (Serial.list()[i].indexOf("tty.usbserial") != -1) {
+      arduino = new Serial(this, Serial.list()[i], 57600);
+      println("Opened serial port: " + Serial.list()[i]);
+    }
+  }
+  delay(10);
 }
 
+
+/* MAIN FUNCTION */
 void draw() 
 {
   updateKeys();
   updateGui();
   drawCameras();
   
+  getData();
+  
   int time = millis() - connectTime;
-  if (time > 50) {
+  
+  if (readyToSend() || true) {
     println(time);
-    getData();
+    sendData();
   }
 }
 
-////////////////////////
-// Draw Cameras
-void drawCameras() {
-  // Draw background box
-  noStroke();
-  fill(100);
-  rect(0, 0, camA.width + camB.width + camB.width + imgBorder * 4, camA.height + imgBorder * 2);
-  // Draw MJPEG streams
-  if (camA.isAvailable()) {
-    camA.read();
-  }
-  image(camA, imgBorder, imgBorder, camA.width * imageScale, camA.height * imageScale);
 
-  if (camB.isAvailable()) {
-    camB.read();
-  }
-  image(camB, camA.width * imageScale + imgBorder * 2, imgBorder, camB.width * imageScale, camB.height * imageScale);
-
-  // Draw disparity map
-  if (true) {
-    fill(255);
-    rect((camA.width * imageScale) + (camB.width * imageScale) + imgBorder * 3, imgBorder, camA.width, camA.height);
-  }
-}
-
-////////////////////////
-// Network Operations
-int loops = 0;
-void sendData() {
-  // 0  enable/disable
-  // 1  turn set point
-  // 2  drive speed
-  // 3  kP
-  // 4  kI
-  // 5  kD
-
-  if (stateToggle.getState()) {
-    writeEnabled(true);
-    writeTurn(turn);
-    writeSpeed(speed);
-  } else {
-    writeEnabled(false);
-  }
-}
-
-void getData() {
-  if (c.available() > 0) {
-    messageQue--;
-    if (messageQue == 0)
-      sendData();
-    connectTime = millis();
-  }
-  //delay(500);
-}
-
-/////////////////////////
-// Writing Operations
-void writeEnabled (boolean isEnabled) {
-  if (isEnabled)
-    c.write("00,000001:");
-  else
-    c.write("00,000000:");
-  messageQue++;
-}
-void writeTurn (float turnAng) {
-  c.write("01," + nf(turnAng, 3, 2) + ":");
-  messageQue++;
-}
-void writeSpeed (float driveSpeed) {
-  if (driveSpeed < 0) {
-    c.write("02," + nf(driveSpeed, 3, 1) + ":");
-  } else {
-    c.write("02," + nf(driveSpeed, 3, 2) + ":");
-  }
-  messageQue++;
-}
-
-////////////////////////
-// GUI Operations
-void updateGui() {
-  stateToggle.update();
-  if (stateToggle.buttonPressed()) stateToggle.toggle();
-}
