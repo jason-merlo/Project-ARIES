@@ -1,8 +1,33 @@
 
 /* SERIAL COMMUNICATIONS */
+boolean voltageRead = false;
+char usrChar;
+String voltageStr = "";
+
 void getData() {
-  if (arduino.available() > 0) {
-    readyToSend = (arduino.read() == '*') ? true : false;
+  if ( arduino.available() > 0 ) {
+    usrChar = arduino.readChar();
+    
+    readyToSend = (usrChar == '*') ? true : false;
+    
+    if (usrChar == ':' && voltageRead) {
+      voltageRead = false;
+      try {
+         battVoltage = Float.parseFloat(voltageStr);
+      } catch (NumberFormatException e) {
+        //e.printStackTrace();
+        println("MALFORMED PACKET");
+      }
+      voltageStr = "";
+      println(battVoltage);
+    }
+    
+    if (voltageRead && usrChar != '\n' && usrChar != '*') {
+      voltageStr += usrChar;
+    }
+    
+    if (usrChar == 'v')
+      voltageRead = true;
   }
 }
 

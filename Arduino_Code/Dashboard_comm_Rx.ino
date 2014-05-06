@@ -31,18 +31,18 @@ byte dataType [] = {
 // 3  kP
 // 4  kI
 // 5  kD
-void serialEvent() {
-  responseTime = 0;
-  lastResponseTime = millis();
+//void serialEvent() {
+void getSerial() {
+  //responseTime = 0;
+  //lastResponseTime = millis();
   
-  while(Serial.available()) {
+  if(Serial.available() > 0) {
     // get new input
     readUsrChar = char(Serial.read());
 
     parseVals();
     delay(1);
   }
-  Serial.println("*");
 }
 
 // Parses data for value type
@@ -152,9 +152,11 @@ void storeVals() {
       break;
     }
     
+    Serial.print('*');
+    
     if (valueId >= 3) {
       turnPID.SetTunings(kP,kI,kD);
-      Serial.println("updated tunings");
+      //Serial.println("updated tunings");
     }
     /*Serial.print(state);
     Serial.print(",");

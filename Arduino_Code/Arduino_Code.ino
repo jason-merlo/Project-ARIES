@@ -14,6 +14,7 @@ const int drivePin = 3;
 
 // Sensors
 const int turnPotPin = 5;
+const int voltagePin = 0;
 
 // PID
 double turnSetPoint, turnInput, turnOutput;
@@ -26,6 +27,10 @@ double driveSpeed;
 double driveLimit;
 long long lastResponseTime;
 int responseTime;
+
+// Periodic update
+const int periodicUpdateInterval = 1000;
+int periodicUpdateTime = millis();
 
 void setup()
 {
@@ -55,6 +60,8 @@ void setup()
 
 void loop()
 {
+  getSerial();
+  
   // Get response time
   responseTime = millis() - lastResponseTime;
   
@@ -73,6 +80,14 @@ void loop()
   // Control actuators
   setTurnOutput(turnOutput, state);
   driveMotorSpeed(driveSpeed, state);
+  
+  
+  if (millis() - periodicUpdateTime >= periodicUpdateInterval) {
+    // Send Battery Voltage
+    sendBatteryVoltage();
+    
+    periodicUpdateTime = millis();
+  }
 }
 
 
@@ -95,12 +110,11 @@ void setTurnOutput(double output, boolean enabled) {
 
 // Drive motor functions
 void initDriveMotor() {
-  Serial.println("Initializing drive");
   delay(1000);
   driveMotor.writeMicroseconds(1500);
   delay(1000);
   // Send signal to start sending data
-  Serial.println("*");
+  Serial.print("*");
 }
 
 // take in number between -500 and 500
@@ -122,4 +136,10 @@ void setDriveLimit(double input) {
   else if (input < 0)
     input = 0;
   driveLimit = input;
+}
+
+void sendBatteryVoltage() {
+  Serial.print('v');
+  Serial.print((10.0f / 1024.0f) * analogRead(voltagePin));
+  Serial.print(':');
 }

@@ -16,6 +16,7 @@ IPCapture camB;
 
 // GUI ELEMENTS
 Button stateToggle;
+BatteryIndicator batteryIndicator;
 
 ///////////////
 // CONSTANTS //
@@ -51,12 +52,14 @@ boolean readyToSend;
 int connectTime;
 int lastSendTime = -1;
 
+// Voltage
+float battVoltage;
 
 /* INITIALIZATION FUNCTION */
 void setup() 
 {
   /* WINDOW SETUP */
-  size(1000, 650);
+  size(1000, 650, "processing.core.PGraphicsRetina2D");
   background(49);
   frameRate(30);
 
@@ -67,9 +70,9 @@ void setup()
   // Start camera streams
   camA.start();
   camB.start();
-
-  /* GUI ELEMENTS */
-  stateToggle = new Button(100, 400, 200, 50, "Disabled", "Enabled", true);
+  
+  /* INITIALIZE GUI */
+  initGui();
   
   /* ARDUINO SERIAL COMMUNICATION */
   for (int i = 0; i < Serial.list().length; i++) {
@@ -87,15 +90,22 @@ void draw()
 {
   updateKeys();
   updateGui();
-  drawCameras();
   
-  getData();
+  try {
+    getData();
+  } catch (NullPointerException e) {
+    e.printStackTrace();
+  }
   
   int time = millis() - connectTime;
   
   if (readyToSend() || true) {
-    println(time);
-    sendData();
+    //println(time);
+    try {
+      sendData();
+    } catch (NullPointerException e) {
+      e.printStackTrace();
+    }
   }
 }
 

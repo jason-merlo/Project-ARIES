@@ -123,9 +123,9 @@ class BatteryIndicator {
     }
   }
   
-  void calculatePercent() {
-    ///////////////////////////
-    //TODO: ADD PERCENT TEST //
-    ///////////////////////////
+  void update(float tBattVoltage) {
+    batteryVoltage = 7.5;
+    batteryPercent = (tBattVoltage != 0) ? batteryVoltage - 7.4 : 0;
+    displayBattery();
   }
 }

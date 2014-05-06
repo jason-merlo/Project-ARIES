@@ -1,7 +1,16 @@
 /* GUI OPERATIONS */
+void initGui() {
+  /* GUI ELEMENTS */
+  stateToggle = new Button(100, 400, 200, 50, "Disabled", "Enabled", true);
+  batteryIndicator = new BatteryIndicator(width - 50, 50, 50);
+}
+
 void updateGui() {
   stateToggle.update();
   if (stateToggle.buttonPressed()) stateToggle.toggle();
+  batteryIndicator.update(battVoltage);
+  
+  drawCameras();
 }
 
 /* DRAW CAMERAS */
