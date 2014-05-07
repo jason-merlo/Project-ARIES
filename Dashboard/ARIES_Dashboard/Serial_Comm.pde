@@ -19,7 +19,7 @@ void getData() {
         println("MALFORMED PACKET");
       }
       voltageStr = "";
-      println(battVoltage);
+      //println(battVoltage);
     }
     
     if (voltageRead && usrChar != '\n' && usrChar != '*') {
@@ -73,5 +73,6 @@ void writeSpeed (float driveSpeed) {
 boolean readyToSend() {
   if (!readyToSend)
     readyToSend = (millis() - lastSendTime > sendTimeout && lastSendTime != -1) ? true : false;
+    println(readyToSend);
   return readyToSend;
 }

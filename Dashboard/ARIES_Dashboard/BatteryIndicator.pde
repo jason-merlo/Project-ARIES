@@ -30,7 +30,7 @@ class BatteryIndicator {
     x = tx;
     y = ty;
     indicatorWidth = size/ratio;
-    indicatorHeight = size;
+    indicatorHeight = size - (ratio*2); // compensate for battery tip
   }
   
   void displayBattery() {
@@ -53,7 +53,7 @@ class BatteryIndicator {
       rect(x, y + (indicatorHeight * (1 - batteryPercent)), indicatorWidth, indicatorHeight * batteryPercent);
       
       //Write battery percentage
-      //textFont(SegoeUI);
+      textFont(avNextBold);
       
       checkClick();
       
@@ -64,7 +64,7 @@ class BatteryIndicator {
       if (enabled) {
         text(int(batteryPercent * 100) + "%", x - textWidth(int(batteryPercent * 100) + "%") - indicatorHeight/10 , y + indicatorHeight);
       } else {
-        text(int(batteryVoltage) + "mV", x - textWidth(int(batteryVoltage) + "mV") - indicatorHeight/10 , y + indicatorHeight);
+        text(batteryVoltage + "V", x - textWidth(batteryVoltage + "V") - indicatorHeight/10 , y + indicatorHeight);
       }
     }
   }
@@ -124,8 +124,8 @@ class BatteryIndicator {
   }
   
   void update(float tBattVoltage) {
-    batteryVoltage = 7.5;
-    batteryPercent = (tBattVoltage != 0) ? batteryVoltage - 7.4 : 0;
+    batteryVoltage = tBattVoltage;
+    batteryPercent = (tBattVoltage != 0) ? (float) (batteryVoltage - 7.4f) : 0.0f;
     displayBattery();
   }
 }

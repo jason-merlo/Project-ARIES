@@ -15,8 +15,14 @@ IPCapture camA;
 IPCapture camB;
 
 // GUI ELEMENTS
+PImage ariesLogo;
 Button stateToggle;
 BatteryIndicator batteryIndicator;
+SignalIndicator signalIndicator;
+
+// FONTS
+PFont avNextBold;
+PFont avNext;
 
 ///////////////
 // CONSTANTS //
@@ -49,6 +55,7 @@ float kD = .1;
 
 // Serial
 boolean readyToSend;
+int responseTime = -1;
 int connectTime;
 int lastSendTime = -1;
 
@@ -60,7 +67,6 @@ void setup()
 {
   /* WINDOW SETUP */
   size(1000, 650, "processing.core.PGraphicsRetina2D");
-  background(49);
   frameRate(30);
 
   /* CAMERA COMMUNICATION */
@@ -97,10 +103,9 @@ void draw()
     e.printStackTrace();
   }
   
-  int time = millis() - connectTime;
+  int responseTime = millis() - connectTime;
   
   if (readyToSend() || true) {
-    //println(time);
     try {
       sendData();
     } catch (NullPointerException e) {

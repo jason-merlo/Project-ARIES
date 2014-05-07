@@ -105,6 +105,8 @@ class Button {
     triangle(x + buttonWidth - 10, y + buttonHeight, x + buttonWidth, y + buttonHeight, x + buttonWidth - 10, y + buttonHeight + 5);
 
     fill(textColor);
+    
+    textFont(avNextBold);
     if (locked) {
       text(lockedText, x + (buttonWidth / 2) - (textWidth(lockedText) / 2), y + (buttonHeight / 2) + 7);
     } 

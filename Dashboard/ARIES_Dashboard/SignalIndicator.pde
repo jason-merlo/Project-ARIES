@@ -14,7 +14,7 @@ class SignalIndicator {
   SignalIndicator(int tx, int ty, int tsize, int tbars) {
     x = tx;
     y = ty;
-    size = tsize;
+    size = tsize/tbars;
     bars = tbars;
   }
   
@@ -50,9 +50,16 @@ class SignalIndicator {
     }
   }
   
-  void testSignal() {
-    //////////////////////////
-    //TODO: ADD SIGNAL TEST //
-    //////////////////////////
+  void update(int respTime) {
+    final int maxRespTime = 200;
+    
+    for (int i = 0; i <= bars; i++) {
+      if ( maxRespTime - responseTime < (maxRespTime/bars) * i) {
+        signalStrength = i;
+        break;
+      }
+    }
+    
+    displaySignal();
   }
 }
