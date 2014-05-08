@@ -7,6 +7,7 @@ String voltageStr = "";
 void getData() {
   if ( arduino.available() > 0 ) {
     usrChar = arduino.readChar();
+    print(usrChar);
     
     readyToSend = (usrChar == '*') ? true : false;
     
@@ -19,7 +20,6 @@ void getData() {
         println("MALFORMED PACKET");
       }
       voltageStr = "";
-      //println(battVoltage);
     }
     
     if (voltageRead && usrChar != '\n' && usrChar != '*') {
@@ -46,6 +46,7 @@ void sendData() {
   } else {
     writeEnabled(false);
   }
+  println("DATA WRITTEN");
   readyToSend = false;
   lastSendTime = millis();
   connectTime = millis();
@@ -71,8 +72,10 @@ void writeSpeed (float driveSpeed) {
 }
 
 boolean readyToSend() {
-  if (!readyToSend)
+  if (!readyToSend) {
     readyToSend = (millis() - lastSendTime > sendTimeout && lastSendTime != -1) ? true : false;
-    println(readyToSend);
+    if (readyToSend)
+      println("TIMEOUT REACHED");
+  }
   return readyToSend;
 }

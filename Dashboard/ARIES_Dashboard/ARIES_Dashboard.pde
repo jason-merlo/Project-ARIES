@@ -105,7 +105,7 @@ void draw()
   
   int responseTime = millis() - connectTime;
   
-  if (readyToSend() || true) {
+  if (readyToSend()) {
     try {
       sendData();
     } catch (NullPointerException e) {
