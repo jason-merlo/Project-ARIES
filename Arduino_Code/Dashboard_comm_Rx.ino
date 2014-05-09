@@ -32,11 +32,10 @@ byte dataType [] = {
 // 4  kI
 // 5  kD
 void serialEvent() {
-  //void getSerial() {
-  //responseTime = 0;
-  //lastResponseTime = millis();
+  responseTime = 0;
+  lastResponseTime = millis();
 
-  while(Serial.available() > 0) {
+  while(Serial.available()) {
     // get new input
     readUsrChar = char(Serial.read());
 
@@ -44,33 +43,7 @@ void serialEvent() {
     delay(1);
   }
 
-  Serial.print("*");
-
-  // Read sensors
-  turnInput = analogRead(turnPotPin);
-
-  // Compute output
-  turnPID.Compute();
-
-  // Check for timeout
-  if (responseTime > responseTimeout) {
-    state = false;
-    driveSpeed = 0;
-  }
-
-  // Control actuators
-  setTurnOutput(turnOutput, state);
-  driveMotorSpeed(driveSpeed, state);
-
-  // Get response time
-  responseTime = millis() - lastResponseTime;
-
-  if (millis() - periodicUpdateTime >= periodicUpdateInterval) {
-    // Send Battery Voltage
-    sendBatteryVoltage();
-
-    periodicUpdateTime = millis();
-  }
+  Serial.println("*");
 }
 
 // Parses data for value type
@@ -81,13 +54,13 @@ void parseVals() {
     char floatbuf[32];
     memset(floatbuf, 0, 32);
     dataBuffer.toCharArray(floatbuf, sizeof(floatbuf));
-    /*Serial.print("String Array: ");
-     Serial.println(floatbuf);*/
+    Serial.print("String Array: ");
+    Serial.println(floatbuf);
 
     valueId = atoi(floatbuf);
 
-    /*Serial.print("ValueID = ");
-     Serial.println(valueId);*/
+    Serial.print("ValueID = ");
+    Serial.println(valueId);
 
     // Reset Buffer
     dataBuffer = "";
@@ -98,44 +71,44 @@ void parseVals() {
     char floatbuf[32];
     memset(floatbuf, 0, 32);
     dataBuffer.toCharArray(floatbuf, sizeof(floatbuf));
-    /*Serial.print("String Array: ");
-     Serial.println(floatbuf);*/
+    Serial.print("String Array: ");
+    Serial.println(floatbuf);
 
     switch(dataType[valueId]) {
     case 0:
       readUsrBool = atoi(floatbuf) >= 1 ? true : false;
-      /*Serial.print("readUsrBool = ");
-       Serial.println(readUsrBool);*/
+      Serial.print("readUsrBool = ");
+      Serial.println(readUsrBool);
       break;
 
     case 1:
       readUsrByte = byte(atoi(floatbuf));
-      /*Serial.print("readUsrBool = ");
-       Serial.println(readUsrBool);*/
+      Serial.print("readUsrBool = ");
+      Serial.println(readUsrBool);
       break;
 
     case 2:
       readUsrInt = dataBuffer.toInt();
-      /*Serial.print("readUsrInt = ");
-       Serial.println(readUsrInt);*/
+      Serial.print("readUsrInt = ");
+      Serial.println(readUsrInt);
       break;
 
     case 3:
       readUsrFloat = atof(floatbuf);
-      /*Serial.print("readUsrFloat = ");
-       Serial.println(readUsrFloat);*/
+      Serial.print("readUsrFloat = ");
+      Serial.println(readUsrFloat);
       break;
 
     case 4:
       readUsrDouble = double(atof(floatbuf));
-      /*Serial.print("readUsrDouble = ");
-       Serial.println(readUsrDouble);*/
+      Serial.print("readUsrDouble = ");
+      Serial.println(readUsrDouble);
       break;
 
     case 5:
       readUsrStr = dataBuffer;
-      /*Serial.print("readUsrStr = ");
-       Serial.println(readUsrStr);*/
+      Serial.print("readUsrStr = ");
+      Serial.println(readUsrStr);
       break;
     }
     // reset buffer
@@ -185,20 +158,21 @@ void storeVals() {
 
   if (valueId >= 3) {
     turnPID.SetTunings(kP,kI,kD);
-    //Serial.println("updated tunings");
+    Serial.println("updated tunings");
   }
-  /*Serial.print(state);
-   Serial.print(",");
-   Serial.print(turnSetPoint);
-   Serial.print(",");
-   Serial.print(driveSpeed);
-   Serial.print(",");
-   Serial.print(kP);
-   Serial.print(",");
-   Serial.print(kI);
-   Serial.print(",");
-   Serial.println(kD);*/
+  Serial.print(state);
+  Serial.print(",");
+  Serial.print(turnSetPoint);
+  Serial.print(",");
+  Serial.print(driveSpeed);
+  Serial.print(",");
+  Serial.print(kP);
+  Serial.print(",");
+  Serial.print(kI);
+  Serial.print(",");
+  Serial.println(kD);
 }
+
 
 
 

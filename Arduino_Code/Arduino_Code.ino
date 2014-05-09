@@ -26,11 +26,11 @@ boolean state; // (enabled/disabled)
 double driveSpeed;
 double driveLimit;
 long long lastResponseTime;
-int responseTime;
+long long responseTime;
 
 // Periodic update
 const int periodicUpdateInterval = 1000;
-int periodicUpdateTime = millis();
+long long periodicUpdateTime = millis();
 
 void setup()
 {
@@ -62,54 +62,14 @@ void loop()
 {
   //getSerial();
   delay(1);
-}
-
-
-
-
-
-// Turning functions
-void setTurnOutput(double output, boolean enabled) {
-  digitalWrite(turnEnable, enabled);
   
-  // Contro H-bridge to turn steering
-  if (output >= 0) {
-    analogWrite(turnRightPin, 0);
-    analogWrite(turnLeftPin, output); 
-  } else {
-    analogWrite(turnLeftPin, 0);
-    analogWrite(turnRightPin, -output);
+  // Check for timeout
+  if (responseTime > responseTimeout) {
+    state = false;
+    driveSpeed = 0;
   }
-}
-
-// Drive motor functions
-void initDriveMotor() {
-  delay(1000);
-  driveMotor.writeMicroseconds(1500);
-  delay(1000);
-  // Send signal to start sending data
-  Serial.print("*");
-}
-
-// take in number between -500 and 500
-void driveMotorSpeed(double output, boolean enabled) {
-  if (output > driveLimit)
-    output = driveLimit;
-  else if (output < -driveLimit)
-    output = -driveLimit;
-    
-  if (enabled) 
-    driveMotor.writeMicroseconds(1500 - output);
-  else
-    driveMotor.writeMicroseconds(1500);
-} 
-
-void setDriveLimit(double input) {
-  if (input > 500)
-    input = 500;
-  else if (input < 0)
-    input = 0;
-  driveLimit = input;
+  
+  updateActuators();
 }
 
 void sendBatteryVoltage() {
