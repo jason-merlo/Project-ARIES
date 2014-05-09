@@ -31,89 +31,119 @@ byte dataType [] = {
 // 3  kP
 // 4  kI
 // 5  kD
-//void serialEvent() {
-void getSerial() {
+void serialEvent() {
+  //void getSerial() {
   //responseTime = 0;
   //lastResponseTime = millis();
-  
-  if(Serial.available() > 0) {
+
+  while(Serial.available() > 0) {
     // get new input
     readUsrChar = char(Serial.read());
 
     parseVals();
     delay(1);
   }
+
+  Serial.print("*");
+
+  // Read sensors
+  turnInput = analogRead(turnPotPin);
+
+  // Compute output
+  turnPID.Compute();
+
+  // Check for timeout
+  if (responseTime > responseTimeout) {
+    state = false;
+    driveSpeed = 0;
+  }
+
+  // Control actuators
+  setTurnOutput(turnOutput, state);
+  driveMotorSpeed(driveSpeed, state);
+
+  // Get response time
+  responseTime = millis() - lastResponseTime;
+
+  if (millis() - periodicUpdateTime >= periodicUpdateInterval) {
+    // Send Battery Voltage
+    sendBatteryVoltage();
+
+    periodicUpdateTime = millis();
+  }
 }
 
 // Parses data for value type
 void parseVals() {
-  
+
   // ValueID's come before ','
   if ( readUsrChar == ',') {
     char floatbuf[32];
     memset(floatbuf, 0, 32);
     dataBuffer.toCharArray(floatbuf, sizeof(floatbuf));
     /*Serial.print("String Array: ");
-    Serial.println(floatbuf);*/
-    
+     Serial.println(floatbuf);*/
+
     valueId = atoi(floatbuf);
-    
+
     /*Serial.print("ValueID = ");
-    Serial.println(valueId);*/
-    
+     Serial.println(valueId);*/
+
     // Reset Buffer
     dataBuffer = "";
-    
-  // Values come before ':' 
-  } else if ( readUsrChar == ':') {
+
+    // Values come before ':' 
+  } 
+  else if ( readUsrChar == ':') {
     char floatbuf[32];
     memset(floatbuf, 0, 32);
     dataBuffer.toCharArray(floatbuf, sizeof(floatbuf));
     /*Serial.print("String Array: ");
-    Serial.println(floatbuf);*/
-    
+     Serial.println(floatbuf);*/
+
     switch(dataType[valueId]) {
     case 0:
       readUsrBool = atoi(floatbuf) >= 1 ? true : false;
       /*Serial.print("readUsrBool = ");
-      Serial.println(readUsrBool);*/
+       Serial.println(readUsrBool);*/
       break;
 
     case 1:
       readUsrByte = byte(atoi(floatbuf));
       /*Serial.print("readUsrBool = ");
-      Serial.println(readUsrBool);*/
+       Serial.println(readUsrBool);*/
       break;
 
     case 2:
       readUsrInt = dataBuffer.toInt();
       /*Serial.print("readUsrInt = ");
-      Serial.println(readUsrInt);*/
+       Serial.println(readUsrInt);*/
       break;
 
     case 3:
       readUsrFloat = atof(floatbuf);
       /*Serial.print("readUsrFloat = ");
-      Serial.println(readUsrFloat);*/
+       Serial.println(readUsrFloat);*/
       break;
 
     case 4:
       readUsrDouble = double(atof(floatbuf));
       /*Serial.print("readUsrDouble = ");
-      Serial.println(readUsrDouble);*/
+       Serial.println(readUsrDouble);*/
       break;
 
     case 5:
       readUsrStr = dataBuffer;
       /*Serial.print("readUsrStr = ");
-      Serial.println(readUsrStr);*/
+       Serial.println(readUsrStr);*/
       break;
     }
     // reset buffer
     dataBuffer = "";
-    
+
     storeVals();
-  } else if (readUsrChar != '\n' && readUsrChar != '\r' && byte(readUsrChar) > 5) {
+  } 
+  else if (readUsrChar != '\n' && readUsrChar != '\r' && byte(readUsrChar) > 5) {
     // Throw out newlines from serial
     // If no parsing information found, continue to search
     dataBuffer += readUsrChar;
@@ -123,51 +153,54 @@ void parseVals() {
 // Store parsed values
 void storeVals() {
   switch(valueId) {
-    case 0:
-      if (readUsrBool) {
-        state = true;
-      } else {
-        state = false;
-      }
-      break;
-    
-    case 1:
-      turnSetPoint = readUsrDouble;
-      break;
-    
-    case 2:
-      driveSpeed = readUsrDouble;
-      break;
-    
-    case 3:
-      kP = readUsrDouble;
-      break;
-    
-    case 4:
-      kI = readUsrDouble;
-      break;
-    
-    case 5:
-      kD = readUsrDouble;
-      break;
+  case 0:
+    if (readUsrBool) {
+      state = true;
+    } 
+    else {
+      state = false;
     }
-    
-    Serial.print('*');
-    
-    if (valueId >= 3) {
-      turnPID.SetTunings(kP,kI,kD);
-      //Serial.println("updated tunings");
-    }
-    /*Serial.print(state);
-    Serial.print(",");
-    Serial.print(turnSetPoint);
-    Serial.print(",");
-    Serial.print(driveSpeed);
-    Serial.print(",");
-    Serial.print(kP);
-    Serial.print(",");
-    Serial.print(kI);
-    Serial.print(",");
-    Serial.println(kD);*/
+    break;
+
+  case 1:
+    turnSetPoint = readUsrDouble;
+    break;
+
+  case 2:
+    driveSpeed = readUsrDouble;
+    break;
+
+  case 3:
+    kP = readUsrDouble;
+    break;
+
+  case 4:
+    kI = readUsrDouble;
+    break;
+
+  case 5:
+    kD = readUsrDouble;
+    break;
+  }
+
+  if (valueId >= 3) {
+    turnPID.SetTunings(kP,kI,kD);
+    //Serial.println("updated tunings");
+  }
+  /*Serial.print(state);
+   Serial.print(",");
+   Serial.print(turnSetPoint);
+   Serial.print(",");
+   Serial.print(driveSpeed);
+   Serial.print(",");
+   Serial.print(kP);
+   Serial.print(",");
+   Serial.print(kI);
+   Serial.print(",");
+   Serial.println(kD);*/
 }
+
+
+
+
 

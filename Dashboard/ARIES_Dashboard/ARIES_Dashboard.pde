@@ -32,7 +32,7 @@ final String ip = "192.168.1.131";
 final int camPortA = 8090;
 final int camPortB = 8091;
 final String camUrl = "/?action=stream.mjpg";
-final String serialPort = "/dev/cu.usbserial";  // All or part of the serial port name
+final String serialPort = "/dev/tty.usbserial";  // All or part of the serial port name
 
 // GUI
 final byte imageScale = 1;

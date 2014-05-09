@@ -60,34 +60,8 @@ void setup()
 
 void loop()
 {
-  getSerial();
-  
-  // Get response time
-  responseTime = millis() - lastResponseTime;
-  
-  // Read sensors
-  turnInput = analogRead(turnPotPin);
-  
-  // Compute output
-  turnPID.Compute();
-  
-  // Check for timeout
-  if (responseTime > responseTimeout) {
-    state = false;
-    driveSpeed = 0;
-  }
-  
-  // Control actuators
-  setTurnOutput(turnOutput, state);
-  driveMotorSpeed(driveSpeed, state);
-  
-  
-  if (millis() - periodicUpdateTime >= periodicUpdateInterval) {
-    // Send Battery Voltage
-    sendBatteryVoltage();
-    
-    periodicUpdateTime = millis();
-  }
+  //getSerial();
+  delay(1);
 }
 
 
