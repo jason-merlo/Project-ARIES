@@ -11,7 +11,7 @@ void getData() {
     
     readyToSend = (usrChar == '*') ? true : false;
     
-    if (usrChar == ':' && voltageRead) {
+    if (usrChar == ']' && voltageRead) {
       voltageRead = false;
       try {
          battVoltage = Float.parseFloat(voltageStr);
@@ -26,7 +26,7 @@ void getData() {
       voltageStr += usrChar;
     }
     
-    if (usrChar == 'v')
+    if (usrChar == '[')
       voltageRead = true;
   }
 }

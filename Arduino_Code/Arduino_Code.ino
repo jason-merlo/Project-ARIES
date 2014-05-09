@@ -63,6 +63,9 @@ void loop()
   //getSerial();
   delay(1);
   
+  // Get response time
+  responseTime = millis() - lastResponseTime;
+  
   // Check for timeout
   if (responseTime > responseTimeout) {
     state = false;
@@ -73,7 +76,7 @@ void loop()
 }
 
 void sendBatteryVoltage() {
-  Serial.print('v');
+  Serial.print('[');
   Serial.print((10.0f / 1024.0f) * analogRead(voltagePin));
-  Serial.print(':');
+  Serial.print(']');
 }
