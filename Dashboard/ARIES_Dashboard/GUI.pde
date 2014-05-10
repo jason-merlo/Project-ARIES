@@ -19,49 +19,40 @@ void updateGui() {
   text("PROJECT", 70, 50);
   textFont(avNextBold);
   text("ARIES", 70 + textWidth("PROJECT"), 50);
+  
   stateToggle.update();
   if (stateToggle.buttonPressed()) stateToggle.toggle();
   batteryIndicator.update(battVoltage);
-  signalIndicator.update(0);
+  signalIndicator.update(responseTime);
   
   drawCameras();
 }
 
 /* DRAW CAMERAS */
 void drawCameras() {
-  /*noStroke();
-  // Draw MJPEG streams
-  if (camA.isAvailable()) {
-    camA.read();
-  }
-  fill(0);
-  rect( imgBorder, imgBorder + 80, 320 * imageScale, 240 * imageScale);
-
-  if (camB.isAvailable()) {
-    camB.read();
-  }
-  rect( 320 * imageScale + imgBorder * 2, imgBorder + 80, 320 * imageScale, 240 * imageScale);
-
-  // Draw disparity map
-  if (true) {
-    fill(50);
-    rect((320 * imageScale) + (320 * imageScale) + imgBorder * 3, imgBorder + 80, 320, 240);
-  }*/
   
   // Draw MJPEG streams
   if (camA.isAvailable()) {
     camA.read();
+    image(camA, imgBorder, imgBorder + 80, camA.width * imageScale, camA.height * imageScale);
+  } else {
+    fill(0);
+    rect( imgBorder, imgBorder + 80, 320 * imageScale, 240 * imageScale);
   }
-  image(camA, imgBorder, imgBorder + 80, camA.width * imageScale, camA.height * imageScale);
 
   if (camB.isAvailable()) {
     camB.read();
+    image(camB, camA.width * imageScale + imgBorder * 2, imgBorder + 80, camB.width * imageScale, camB.height * imageScale);
+  } else {
+    fill(0);
+    rect( 320 * imageScale + imgBorder * 2, imgBorder + 80, 320 * imageScale, 240 * imageScale);
   }
-  image(camB, camA.width * imageScale + imgBorder * 2, imgBorder + 80, camB.width * imageScale, camB.height * imageScale);
-
   // Draw disparity map
-  if (true) {
+  if (camA.isAvailable() && camB.isAvailable()) {
     fill(50);
     rect((camA.width * imageScale) + (camB.width * imageScale) + imgBorder * 3, imgBorder + 80, camA.width, camA.height);
+  } else {
+    fill(50);
+    rect((320 * imageScale) + (320 * imageScale) + imgBorder * 3, imgBorder + 80, 320, 240);
   }
 }

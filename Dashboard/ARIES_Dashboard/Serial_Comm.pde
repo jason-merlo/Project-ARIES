@@ -7,9 +7,14 @@ String voltageStr = "";
 void getData() {
   if ( arduino.available() > 0 ) {
     usrChar = arduino.readChar();
-    print(usrChar);
     
-    readyToSend = (usrChar == '*') ? true : false;
+    if (usrChar == '*') {
+      readyToSend = true;
+      connectTime = millis();
+      println("MESSAGE RECIEVED --------------------------------------");
+    } else {
+      //readyToSend = false;
+    }
     
     if (usrChar == ']' && voltageRead) {
       voltageRead = false;
@@ -46,7 +51,7 @@ void sendData() {
   } else {
     writeEnabled(false);
   }
-  println("DATA WRITTEN");
+  
   readyToSend = false;
   lastSendTime = millis();
   connectTime = millis();
@@ -69,13 +74,4 @@ void writeSpeed (float driveSpeed) {
   } else {
     arduino.write("02," + nf(driveSpeed, 3, 2) + ":");
   }
-}
-
-boolean readyToSend() {
-  if (!readyToSend) {
-    readyToSend = (millis() - lastSendTime > sendTimeout && lastSendTime != -1) ? true : false;
-    if (readyToSend)
-      println("TIMEOUT REACHED");
-  }
-  return readyToSend;
 }
