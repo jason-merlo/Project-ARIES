@@ -1,13 +1,16 @@
 // KeyInput Variables
 boolean keyHeld = false;
-
-boolean keyRight = false;
-boolean keyLeft = false;
-boolean keyUp = false;
 boolean keyDown = false;
+
+boolean rightKey = false;
+boolean leftKey = false;
+boolean upKey = false;
+boolean downKey = false;
 
 void keyPressed() {
 
+  keyDown = true;
+  
   // onRelease keys
   if (!keyHeld) {
     keyHeld = true;
@@ -28,50 +31,51 @@ void keyPressed() {
   // onHold keys
   // Drive
   if (key == 'w') {
-    keyUp = true;
+    upKey = true;
   } else if (key == 's') {
-    keyDown = true;
+    downKey = true;
   }
   // Turn
   if (key == 'a') {
-    keyRight = true;
+    rightKey = true;
   } else if (key == 'd') {
-    keyLeft = true;
+    leftKey = true;
   }
 }
 void keyReleased() {
   keyHeld = false;
+  keyDown = false;
   
   // onHold keys
   // Drive
   if (key == 'w')
-    keyUp = false;
+    upKey = false;
   if (key == 's')
-    keyDown = false;
+    downKey = false;
   // Turn
   if (key == 'a')
-    keyRight = false;
+    rightKey = false;
   if (key == 'd')
-    keyLeft = false;
+    leftKey = false;
 }
 
 // Key Updater
 void updateKeys() {
   // Drive
-  if (keyUp == true) {
+  if (upKey == true) {
     speed = 150;
-  } else if (keyDown == true) {
+  } else if (downKey == true) {
     speed = -75;
-  } if (keyDown == false && keyUp == false) {
+  } if (downKey == false && upKey == false) {
     speed = 0;
   }
   
   // Turn
-  if (keyLeft == true) {
+  if (leftKey == true) {
     turn = 700;
-  } else if (keyRight == true) {
-    turn = 350;
+  } else if (rightKey == true) {
+    turn = 375;
   } else {
-    turn = 500;
+    turn = 525;
   }
 }

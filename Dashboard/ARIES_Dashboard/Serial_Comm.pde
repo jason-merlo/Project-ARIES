@@ -9,11 +9,8 @@ void getData() {
     usrChar = arduino.readChar();
     
     if (usrChar == '*') {
-      readyToSend = true;
       connectTime = millis();
-      println("MESSAGE RECIEVED --------------------------------------");
-    } else {
-      //readyToSend = false;
+      println(responseTime);
     }
     
     if (usrChar == ']' && voltageRead) {
@@ -52,9 +49,18 @@ void sendData() {
     writeEnabled(false);
   }
   
-  readyToSend = false;
+  if (setPid.buttonPressed()) {
+    writePid(kP, kI, kD);
+  }
+  
   lastSendTime = millis();
   connectTime = millis();
+}
+
+void writePid (float pid_kP, float pid_kI, float pid_kD) {
+  arduino.write("03," + nf(pid_kP, 2, 3) + ":");
+  arduino.write("04," + nf(pid_kI, 2, 3) + ":");
+  arduino.write("05," + nf(pid_kD, 2, 3) + ":");
 }
 
 void writeEnabled (boolean isEnabled) {

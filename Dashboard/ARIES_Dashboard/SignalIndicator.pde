@@ -50,8 +50,8 @@ class SignalIndicator {
     }
   }
   
-  void update(int respTime) {
-    final int maxRespTime = 200;
+  void update(float respTime) {
+    final float maxRespTime = 200;
     
     for (int i = 0; i <= bars; i++) {
       if ( maxRespTime - responseTime < (maxRespTime/bars) * i) {

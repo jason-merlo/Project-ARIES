@@ -91,6 +91,7 @@ class TextBox {
     
     //Handle typing
     if (selected && !charAdded && keyDown) {
+      println("KEYPRESSED");
       if (key == '1' || key == '2' || key == '3' || key == '4' || key == '5' || key == '6' || key == '7' || key == '8' || key == '9' || key == '0') {
         inputText += key;
       }
@@ -123,7 +124,6 @@ class TextBox {
   
   private void drawTextBox() {
     
-      //textFont(SegoeUI);
       if(fitText) {
         //Calculate width and height
         w = int(textWidth(inputText));
@@ -163,10 +163,10 @@ class TextBox {
       
       rect(x - 4, y , w + 6, h);
       
-      fill(255);
-      
-      text(label, x - textWidth(label) - 5, y + h - 2);
-      text(inputText, x + w - int(textWidth(inputText)), y + h - 2);
+      fill(50);
+      text(label, x - textWidth(label) - 5, y + h - 4);
+      fill(#eeeeee);
+      text(inputText, x + w - int(textWidth(inputText)), y + h-4);
   }
 }
 
