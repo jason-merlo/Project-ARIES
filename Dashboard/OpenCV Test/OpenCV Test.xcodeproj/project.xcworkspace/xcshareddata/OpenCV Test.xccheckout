@@ -10,22 +10,26 @@
 	<string>OpenCV Test</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
+		<key>3B7DC65996B5BD500E3BF296F1F814FBDFB78CDE</key>
+		<string>https://github.com/SuperUser320/Project-ARIES.git</string>
 		<key>C8061FAA-7DF2-4C09-8D07-2F4357653877</key>
 		<string>https://github.com/SuperUser320/Project-ARIES.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
-	<string>Dashboard/OpenCV Test/OpenCV Test.xcodeproj/project.xcworkspace</string>
+	<string>Dashboard/OpenCV Test/OpenCV Test.xcodeproj</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
-		<key>C8061FAA-7DF2-4C09-8D07-2F4357653877</key>
+		<key>3B7DC65996B5BD500E3BF296F1F814FBDFB78CDE</key>
 		<string>../../../..</string>
+		<key>C8061FAA-7DF2-4C09-8D07-2F4357653877</key>
+		<string>../../../../../Project ARIES</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
 	<string>https://github.com/SuperUser320/Project-ARIES.git</string>
 	<key>IDESourceControlProjectVersion</key>
-	<integer>110</integer>
+	<integer>111</integer>
 	<key>IDESourceControlProjectWCCIdentifier</key>
-	<string>C8061FAA-7DF2-4C09-8D07-2F4357653877</string>
+	<string>3B7DC65996B5BD500E3BF296F1F814FBDFB78CDE</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
 		<dict>
@@ -35,6 +39,14 @@
 			<string>C8061FAA-7DF2-4C09-8D07-2F4357653877</string>
 			<key>IDESourceControlWCCName</key>
 			<string>Project ARIES</string>
+		</dict>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>3B7DC65996B5BD500E3BF296F1F814FBDFB78CDE</string>
+			<key>IDESourceControlWCCName</key>
+			<string>Project%20ARIES</string>
 		</dict>
 	</array>
 </dict>
