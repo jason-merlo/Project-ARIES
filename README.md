@@ -15,3 +15,12 @@ The Arduino is tasked with all the low level I/O on the car, this includes sampl
 
 > A PID loop, for those who do not know, is a control feedback loop used to minimize accumulated error by using the three part formula composed of three characteristics; a _proportional_ response characteristic, an _integrated error_ characteristic, and a _derived prediction of overshoot_ characteristic.  By balancing the tree of these functions an aggressive and accurate output can be created.  More information on PID loops can be found on [Wikipedia](http://en.wikipedia.org/wiki/PID_controller)
 
+###Offboard Processes Breakdown (Dashboard)
+
+######Vision Processing
+The vision processing for this project was done using OpenCV using Java.  On the platform a jpeg stream is created for the left and right channel of the vision which is received by the driver station and displayed.  Once the stream is obtained a stereo SGBM algorithm is applied to create a disparity map which is then also displayed on the dashboard. The vision processing was originally designed to be done onboard, but due to limitation of low power ARM cores it was moved offboard to the dashboard instead.
+######Dashboard
+In addition to displaying the left and right video feeds and disparity map, the dashboard also displays signal strength, battery info, enable/disable button, and PID tuning parameters for turning.
+
+###Still In Progress
+As noted in the flow diagram object avoidance and ground speed sensor were not implemented due to time constraints, however they are features that may still be added.
