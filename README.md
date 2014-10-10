@@ -5,6 +5,15 @@ Project ARIES was originally designed with the intent of creating a scale car ca
 ###Onboard Hardware
 ![Computing Block](https://raw.githubusercontent.com/SuperUser320/Project-ARIES/master/Documentation/Pictures/IMG_6334-356.png)
 
+######Processors
+The onboard hardware consists of two main processors, the Arduino Pro board containing an ATMega328 microcontroller, and the BeagleBoard-XM containing a 1.2GHz TI OMAP3 processor.  The Arduino and BeagleBoard can interface directly with each other via USB and with the dashboard via 2.4GHz radio and WiFi respectively.
+
+######Motor Controllers
+The car employs two motor controllers, one for turning, and one for driving.  For the turning a custom motor controller board was created  based on the L298 Dual H-bridge chip that interfaced with both the turning motor and potentiometer.  For driving the main motor an off the shelf 40A motor controller was used controlled via the Arduino by PWM signal.
+
+######Extras
+
+
 ###Top Level Controls Layout
 ![Controls Flow Diagram](https://raw.githubusercontent.com/SuperUser320/Project-ARIES/master/Documentation/Pictures/Autonomous%20Flow%20Diagram-89.png)
 
