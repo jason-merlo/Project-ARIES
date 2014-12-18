@@ -63,7 +63,7 @@ void keyReleased() {
 void updateKeys() {
   // Drive
   if (upKey == true) {
-    speed = 150;
+    speed = 125;
   } else if (downKey == true) {
     speed = -75;
   } if (downKey == false && upKey == false) {

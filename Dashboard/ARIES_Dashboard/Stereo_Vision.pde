@@ -29,7 +29,9 @@ void updateStereo() {
           int speckleRange,
           boolean fullDP)
    */
-  StereoSGBM stereo =  new StereoSGBM(0, 16, 3, 32, 512, 128, 64, 24, 0, 0, true);
+  //StereoSGBM stereo =  new StereoSGBM(0, 16, 3, 32, 512, 128, 64, 24, 0, 0, true);
+  
+  StereoSGBM stereo =  new StereoSGBM(-32, 64, 3, 216, 864, -1, 16, 10, 50, 1, true);
   stereo.compute(left, right, disparity );
 
   Mat depthMat = OpenCV.imitate(left);

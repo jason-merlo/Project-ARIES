@@ -5,6 +5,8 @@ class SignalIndicator {
   
   //Data variables
   int signalStrength;
+  float responseTime;
+  float lastResponseTime;
   
   //Color variables
   color signalColor = color(160);
@@ -54,11 +56,14 @@ class SignalIndicator {
     final float maxRespTime = 200;
     
     for (int i = 0; i <= bars; i++) {
+      responseTime = respTime * 0.1 + lastResponseTime * 0.9;
+      
       if ( maxRespTime - responseTime < (maxRespTime/bars) * i) {
         signalStrength = i;
         break;
       }
     }
+    lastResponseTime = responseTime;
     
     displaySignal();
   }
